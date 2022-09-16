@@ -35,12 +35,12 @@ public class Order implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "client_id")
 	private User client;
-	
+
 	private Integer orderStatus;
-	
+
 	@OneToMany(mappedBy = "id.order")
 	private Set<OrderItem> items = new HashSet<>();
-	
+
 	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
 	private Payment payment;
 
@@ -50,7 +50,7 @@ public class Order implements Serializable {
 
 	public Order(Long id, Instant moment, OrderStatus orderStatus, User client) {
 		super();
-		this.id = id;		
+		this.id = id;
 		this.moment = moment;
 		setOrderStatus(orderStatus);
 		this.client = client;
@@ -79,8 +79,8 @@ public class Order implements Serializable {
 	public void setClient(User client) {
 		this.client = client;
 	}
-	
-	public Set<OrderItem> getItems(){
+
+	public Set<OrderItem> getItems() {
 		return items;
 	}
 
@@ -89,16 +89,24 @@ public class Order implements Serializable {
 	}
 
 	public void setOrderStatus(OrderStatus orderStatus) {
-		if(orderStatus != null)
-		this.orderStatus = orderStatus.getCode();
+		if (orderStatus != null)
+			this.orderStatus = orderStatus.getCode();
 	}
-	
+
 	public Payment getPayment() {
 		return payment;
 	}
 
 	public void setPayment(Payment payment) {
 		this.payment = payment;
+	}
+
+	public Double getTotal() {
+		double sum = 0.0;
+		for (OrderItem x : items) {
+			sum += x.getSubTotal();
+		}
+		return sum;
 	}
 
 	@Override
@@ -117,7 +125,5 @@ public class Order implements Serializable {
 		Order other = (Order) obj;
 		return Objects.equals(id, other.id);
 	}
-
-
 
 }
